@@ -20,6 +20,7 @@ from .schema import (
     PlanEntryPriority,
     PlanEntryStatus,
     ResourceContentBlock,
+    SessionInfoUpdate,
     SessionNotification,
     TerminalToolCallContent,
     TextContentBlock,
@@ -45,6 +46,7 @@ SessionUpdate = (
     | UserMessageChunk
     | ToolCallStart
     | ToolCallProgress
+    | SessionInfoUpdate
 )
 
 ToolCallContentVariant = ContentToolCallContent | FileEditToolCallContent | TerminalToolCallContent
