@@ -81,6 +81,48 @@ Open the Agents panel and start the session. Each message you send should be ech
 
 Any ACP client that communicates over stdio can spawn the same script; no additional transport configuration is required.
 
+### HTTP/WebSocket (remote agents)
+
+For agents deployed as web services (e.g., on AWS Bedrock AgentCore), you can connect via WebSocket instead of stdio. Start the HTTP echo agent server:
+
+```bash
+# Terminal 1: Start the server
+pip install starlette uvicorn
+python examples/http_echo_agent.py
+```
+
+Then connect a client from another terminal:
+
+```bash
+# Terminal 2: Connect via WebSocket
+python examples/http_client.py ws://localhost:8080/ws
+```
+
+Or connect programmatically:
+
+```python
+import asyncio
+from acp import PROTOCOL_VERSION, text_block
+from acp.http import connect_http_agent
+from acp.schema import ClientCapabilities, Implementation
+
+async def main():
+    async with connect_http_agent(MyClient(), "ws://localhost:8080/ws") as conn:
+        await conn.initialize(
+            protocol_version=PROTOCOL_VERSION,
+            client_capabilities=ClientCapabilities(),
+            client_info=Implementation(name="my-client", title="My Client", version="0.1.0"),
+        )
+        session = await conn.new_session(mcp_servers=[], cwd=".")
+        await conn.prompt(session_id=session.session_id, prompt=[text_block("Hello!")])
+
+asyncio.run(main())
+```
+
+The `connect_http_agent` context manager handles WebSocket connection lifecycle and uses the same `ClientSideConnection` API as stdio, so all existing client code works unchanged.
+
+> **Note:** The server-side adapter requires `starlette` and `uvicorn` (listed as dev dependencies). For custom server frameworks, implement the `WebSocketLike` protocol (`recv`, `send`, `close`) and pass to `WebSocketStreamAdapter`.
+
 ### Programmatic launch
 
 Prefer to drive agents directly from Python? The `spawn_agent_process` helper wires stdio and lifecycle management for you:

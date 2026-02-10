@@ -20,7 +20,8 @@ uv add agent-client-protocol
 
 - **Spec parity:** Generated Pydantic models in `acp.schema` track every ACP release so payloads stay valid.
 - **Runtime ergonomics:** Async base classes, stdio JSON-RPC plumbing, and lifecycle helpers keep custom agents tiny.
-- **Examples ready:** Streaming, permissions, Gemini bridge, and duet demos live under `examples/`.
+- **Multiple transports:** Stdio for local agents, HTTP/WebSocket for remote deployments — same `Connection` API for both.
+- **Examples ready:** Streaming, permissions, Gemini bridge, HTTP/WebSocket, and duet demos live under `examples/`.
 - **Helper builders:** `acp.helpers` mirrors the Go/TS SDK APIs for content blocks, tool calls, and session updates.
 - **Contrib utilities:** Session accumulators, tool call trackers, and permission brokers share patterns from real deployments.
 
@@ -53,9 +54,10 @@ See real adopters like kimi-cli in the [Use Cases list](https://agentclientproto
 ## Project layout
 
 - `src/acp/`: runtime package (agents, clients, transports, helpers, schema bindings, contrib utilities)
+- `src/acp/http/`: HTTP/WebSocket transport — `WebSocketStreamAdapter`, `connect_http_agent`, and Starlette wrapper
 - `schema/`: upstream JSON schema sources (regenerate via `make gen-all`)
 - `docs/`: MkDocs content backing the published documentation
-- `examples/`: runnable scripts covering stdio orchestration patterns
+- `examples/`: runnable scripts covering stdio and HTTP/WebSocket orchestration patterns
 - `tests/`: pytest suite with golden fixtures and optional Gemini coverage
 
 ## Developer commands
